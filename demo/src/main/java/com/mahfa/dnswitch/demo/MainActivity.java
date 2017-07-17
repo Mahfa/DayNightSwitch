@@ -1,5 +1,6 @@
 package com.mahfa.dnswitch.demo;
 
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,19 +13,27 @@ import com.mahfa.dnswitch.DayNightSwitchListener;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
+    public static final String KEY_DAY_NIGHT_SWITCH_STATE = "day_night_switch_state";
+
+    private DayNightSwitch day_night_switch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DayNightSwitch day_night_switch = (DayNightSwitch) findViewById(R.id.day_night_switch);
         final View background_view = findViewById(R.id.background_view);
+
+        day_night_switch = (DayNightSwitch) findViewById(R.id.day_night_switch);
+        day_night_switch.setDuration(450);
 
         day_night_switch.setListener(new DayNightSwitchListener() {
             @Override
             public void onSwitch(boolean is_night) {
                 Log.d(TAG, "onSwitch() called with: is_night = [" + is_night + "]");
+                if (is_night)
+                    background_view.setAlpha(1f);
+
             }
         });
 
@@ -45,5 +54,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onAnimValueChanged() called with: value = [" + value + "]");
             }
         });
+
+        if (savedInstanceState != null
+                && savedInstanceState.containsKey(KEY_DAY_NIGHT_SWITCH_STATE))
+            day_night_switch.setIsNight(savedInstanceState.getBoolean(KEY_DAY_NIGHT_SWITCH_STATE));
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_DAY_NIGHT_SWITCH_STATE, day_night_switch.isNight());
     }
 }
