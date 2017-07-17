@@ -55,13 +55,7 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!is_animating) {
-                    is_animating = true;
-                    is_night = !is_night;
-                    if (listener != null)
-                        listener.onSwitch(is_night);
-                    startAnimation();
-                }
+                toggle();
             }
         });
         light_back_drawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT
@@ -75,6 +69,15 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
         clouds_bitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.img_clouds);
     }
 
+    public void toggle(){
+        if (!is_animating) {
+            is_animating = true;
+            is_night = !is_night;
+            if (listener != null)
+                listener.onSwitch(is_night);
+            startAnimation();
+        }
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
