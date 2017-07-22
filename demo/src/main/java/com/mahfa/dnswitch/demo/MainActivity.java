@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(KEY_DAY_NIGHT_SWITCH_STATE))
-            day_night_switch.setIsNight(savedInstanceState.getBoolean(KEY_DAY_NIGHT_SWITCH_STATE));
+            day_night_switch.setIsNight(savedInstanceState.getBoolean(KEY_DAY_NIGHT_SWITCH_STATE) , true);
     }
 
     @Override

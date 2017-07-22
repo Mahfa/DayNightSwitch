@@ -167,11 +167,11 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
 
     }
 
-    public void setIsNight(boolean is_night) {
+    public void setIsNight(boolean is_night , boolean trigger_listener) {
         this.is_night = is_night;
         value = is_night ? 1 : 0;
         invalidate();
-        if (listener != null)
+        if (listener != null && trigger_listener)
             listener.onSwitch(is_night);
 
     }
