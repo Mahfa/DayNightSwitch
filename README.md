@@ -21,7 +21,7 @@ Step 2. Add the dependency
 
 ```
 	dependencies {
-	        compile 'com.github.Mahfa:DayNightSwitch:1.2'
+	        compile 'com.github.Mahfa:DayNightSwitch:1.4'
 	}
 ```
 

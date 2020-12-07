@@ -1,5 +1,7 @@
 package com.mahfa.dnswitch;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,8 +11,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ValueAnimator;
 
 /**
  * Created by mohsen.falahi on 7/16/2017.
@@ -18,22 +18,22 @@ import com.nineoldandroids.animation.ValueAnimator;
 
 public class DayNightSwitch extends View implements Animator.AnimatorListener {
 
-    private boolean is_animating = false;
+    private boolean isAnimating = false;
 
-    private GradientDrawable light_back_drawable;
-    private BitmapDrawable dark_back_bitmap;
-    private BitmapDrawable sun_bitmap;
-    private BitmapDrawable moon_bitmap;
-    private BitmapDrawable clouds_bitmap;
+    private final GradientDrawable lightBackDrawable;
+    private final BitmapDrawable darkBackBitmap;
+    private final BitmapDrawable sunBitmap;
+    private final BitmapDrawable moonBitmap;
+    private final BitmapDrawable cloudsBitmap;
 
     private float value;
-    private boolean is_night;
+    private boolean isNight;
     private int duration;
 
 
     private DayNightSwitchListener listener;
 
-    private DayNightSwitchAnimListener anim_listener;
+    private DayNightSwitchAnimListener animListener;
 
 
     public DayNightSwitch(Context context) {
@@ -49,7 +49,7 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
         setWillNotDraw(false);
 
         value = 0;
-        is_night = false;
+        isNight = false;
         duration = 500;
 
         setOnClickListener(new OnClickListener() {
@@ -58,23 +58,23 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
                 toggle();
             }
         });
-        light_back_drawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT
+        lightBackDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT
                 , new int[]{Color.parseColor("#21b5e7"), Color.parseColor("#59ccda")});
-        light_back_drawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+        lightBackDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
 
-        dark_back_bitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.dark_background);
-        sun_bitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.img_sun);
-        moon_bitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.img_moon);
-        clouds_bitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.img_clouds);
+        darkBackBitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.dark_background);
+        sunBitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.img_sun);
+        moonBitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.img_moon);
+        cloudsBitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.img_clouds);
     }
 
     public void toggle(){
-        if (!is_animating) {
-            is_animating = true;
-            is_night = !is_night;
+        if (!isAnimating) {
+            isAnimating = true;
+            isNight = !isNight;
             if (listener != null)
-                listener.onSwitch(is_night);
+                listener.onSwitch(isNight);
             startAnimation();
         }
     }
@@ -85,43 +85,43 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
 
         int space = getWidth() - getHeight();
 
-        dark_back_bitmap.setBounds(0, 0, getWidth(), getHeight());
-        dark_back_bitmap.setAlpha((int) (value * 255));
-        dark_back_bitmap.draw(canvas);
+        darkBackBitmap.setBounds(0, 0, getWidth(), getHeight());
+        darkBackBitmap.setAlpha((int) (value * 255));
+        darkBackBitmap.draw(canvas);
 
-        light_back_drawable.setCornerRadius(getHeight() / 2);
-        light_back_drawable.setBounds(0, 0, getWidth(), getHeight());
-        light_back_drawable.setAlpha(255 - ((int) (value * 255)));
-        light_back_drawable.draw(canvas);
+        lightBackDrawable.setCornerRadius(getHeight() / 2);
+        lightBackDrawable.setBounds(0, 0, getWidth(), getHeight());
+        lightBackDrawable.setAlpha(255 - ((int) (value * 255)));
+        lightBackDrawable.draw(canvas);
 
 
-        moon_bitmap.setBounds((space) - (int) (value * space)
+        moonBitmap.setBounds((space) - (int) (value * space)
                 , 0
                 , getWidth() - (int) (value * space)
                 , getHeight());
-        moon_bitmap.setAlpha((int) (value * 255));
-        moon_bitmap.getBitmap();
+        moonBitmap.setAlpha((int) (value * 255));
+        moonBitmap.getBitmap();
 
-        sun_bitmap.setBounds((space) - (int) (value * space)
+        sunBitmap.setBounds((space) - (int) (value * space)
                 , 0
                 , getWidth() - (int) (value * space)
                 , getHeight());
-        sun_bitmap.setAlpha(255 - ((int) (value * 255)));
+        sunBitmap.setAlpha(255 - ((int) (value * 255)));
 
-        moon_bitmap.draw(canvas);
-        sun_bitmap.draw(canvas);
+        moonBitmap.draw(canvas);
+        sunBitmap.draw(canvas);
 
-        moon_bitmap.setAlpha((int) (value * 255));
+        moonBitmap.setAlpha((int) (value * 255));
 
         int clouds_bitmap_alpha = value <= 0.5 ? (255 - ((int) (((value - 0.5) * 2) * 255))) : 0;
-        clouds_bitmap.setAlpha(clouds_bitmap_alpha);
+        cloudsBitmap.setAlpha(clouds_bitmap_alpha);
 
         int clouds_bitmap_left = (int) ((getHeight() / 2) - (value * (getHeight() / 2)));
-        clouds_bitmap.setBounds(clouds_bitmap_left
+        cloudsBitmap.setBounds(clouds_bitmap_left
                 , 0
                 , clouds_bitmap_left + getHeight()
                 , getHeight());
-        clouds_bitmap.draw(canvas);
+        cloudsBitmap.draw(canvas);
 
     }
 
@@ -136,8 +136,8 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
                 value = (float) animation.getAnimatedValue();
-                if (anim_listener != null)
-                    anim_listener.onAnimValueChanged(value);
+                if (animListener != null)
+                    animListener.onAnimValueChanged(value);
                 invalidate();
             }
         });
@@ -146,15 +146,15 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
 
     @Override
     public void onAnimationStart(Animator animation) {
-        if (anim_listener != null)
-            anim_listener.onAnimStart();
+        if (animListener != null)
+            animListener.onAnimStart();
     }
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        is_animating = false;
-        if (anim_listener != null)
-            anim_listener.onAnimEnd();
+        isAnimating = false;
+        if (animListener != null)
+            animListener.onAnimEnd();
     }
 
     @Override
@@ -168,7 +168,7 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
     }
 
     public void setIsNight(boolean is_night , boolean trigger_listener) {
-        this.is_night = is_night;
+        this.isNight = is_night;
         value = is_night ? 1 : 0;
         invalidate();
         if (listener != null && trigger_listener)
@@ -177,7 +177,7 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
     }
 
     public boolean isNight() {
-        return is_night;
+        return isNight;
     }
 
     public void setListener(DayNightSwitchListener listener) {
@@ -186,7 +186,7 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
 
 
     public void setAnimListener(DayNightSwitchAnimListener animListener) {
-        this.anim_listener = animListener;
+        this.animListener = animListener;
     }
 
     public void setDuration(int duration) {
