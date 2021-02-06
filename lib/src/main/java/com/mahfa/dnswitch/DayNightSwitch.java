@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
@@ -69,7 +70,7 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
         cloudsBitmap = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.img_clouds);
     }
 
-    public void toggle(){
+    public void toggle() {
         if (!isAnimating) {
             isAnimating = true;
             isNight = !isNight;
@@ -82,14 +83,13 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         int space = getWidth() - getHeight();
 
         darkBackBitmap.setBounds(0, 0, getWidth(), getHeight());
         darkBackBitmap.setAlpha((int) (value * 255));
         darkBackBitmap.draw(canvas);
 
-        lightBackDrawable.setCornerRadius(getHeight() / 2);
+        lightBackDrawable.setCornerRadius((float) getHeight() / 2);
         lightBackDrawable.setBounds(0, 0, getWidth(), getHeight());
         lightBackDrawable.setAlpha(255 - ((int) (value * 255)));
         lightBackDrawable.draw(canvas);
@@ -111,18 +111,23 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
         moonBitmap.draw(canvas);
         sunBitmap.draw(canvas);
 
-        moonBitmap.setAlpha((int) (value * 255));
-
-        int clouds_bitmap_alpha = value <= 0.5 ? (255 - ((int) (((value - 0.5) * 2) * 255))) : 0;
-        cloudsBitmap.setAlpha(clouds_bitmap_alpha);
-
         int clouds_bitmap_left = (int) ((getHeight() / 2) - (value * (getHeight() / 2)));
         cloudsBitmap.setBounds(clouds_bitmap_left
                 , 0
                 , clouds_bitmap_left + getHeight()
                 , getHeight());
-        cloudsBitmap.draw(canvas);
 
+        cloudsBitmap.setAlpha(cloudBitmapAlpha());
+
+        cloudsBitmap.draw(canvas);
+    }
+
+    private int cloudBitmapAlpha() {
+        if (value <= 0.5) {
+            double a = (value - 0.5) * 2 * 255;
+            return 255 - Math.min(Math.max((int) a, 0), 255);
+        }
+        return 0;
     }
 
     private void startAnimation() {
@@ -167,7 +172,7 @@ public class DayNightSwitch extends View implements Animator.AnimatorListener {
 
     }
 
-    public void setIsNight(boolean is_night , boolean trigger_listener) {
+    public void setIsNight(boolean is_night, boolean trigger_listener) {
         this.isNight = is_night;
         value = is_night ? 1 : 0;
         invalidate();
